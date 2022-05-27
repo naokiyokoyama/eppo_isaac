@@ -2,8 +2,8 @@ import argparse
 import os.path as osp
 
 from hydra import compose, initialize
-from isaacgymenvs import train  # register necessary resolvers and IsaacSim
-from isaacgymenvs.tasks import isaacgym_task_map
+from isaacgymenvs import train  # this registers necessary resolvers + imports IsaacSim
+from envs import isaacgym_task_map
 from omegaconf import OmegaConf
 
 from drl.utils.common import construct_config
