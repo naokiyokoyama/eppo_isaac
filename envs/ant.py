@@ -99,10 +99,24 @@ def compute_ant_reward(
             dim=1,
         )
         reward_terms = torch.where(terminated_agents, death_terms, reward_terms)
-        # DO NOT USE TORCH.SUM; it significantly decreases performance. Why? Not sure...
-        total_reward = reward_terms[:, 0]
-        for i in range(reward_terms.shape[1] - 1):
-            total_reward += reward_terms[:, i + 1]
+
+        total_reward = (
+            progress_reward
+            + alive_reward
+            + up_reward
+            + heading_reward
+            - actions_cost_scale * actions_cost
+            - energy_cost_scale * electricity_cost
+            - dof_at_limit_cost * joints_at_limit_cost_scale
+        )
+
+        # adjust reward for fallen agents
+        total_reward = torch.where(
+            obs_buf[:, 0] < termination_height,
+            torch.ones_like(total_reward) * death_cost,
+            total_reward,
+        )
+        assert torch.allclose(total_reward, reward_terms.sum(1), 1e-6, 1e-6)
         """ End of changes for reward terms start here """
 
         # reset agents
