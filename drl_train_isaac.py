@@ -32,6 +32,9 @@ def main():
     initialize(config_path=config_path, job_name="drl_isaac_training")
     cfg = compose(config_name=config_name, overrides=args.isaac_overrides)
 
+    drl_config = construct_config(args.drl_config, args.drl_overrides)
+    cfg.seed = drl_config.SEED  # sync seed with drl's cfg
+
     print(OmegaConf.to_yaml(cfg))
     env = isaacgym_task_map[cfg.task_name](
         cfg=OmegaConf.to_object(cfg.task),
@@ -39,9 +42,8 @@ def main():
         graphics_device_id="cuda:0",
         headless=cfg.headless,
     )
-    config = construct_config(args.drl_config, args.drl_overrides)
-    runner_cls = drl_registry.get_runner(config.RUNNER.name)
-    runner = runner_cls(config, env)
+    runner_cls = drl_registry.get_runner(drl_config.RUNNER.name)
+    runner = runner_cls(drl_config, env)
     runner.train()
 
 
