@@ -3,9 +3,10 @@ This will plot reward curves using input csvs
 """
 import argparse
 import os.path as osp
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn
-import matplotlib.pyplot as plt
 
 
 def convert_csv_to_df(csv_path):
@@ -16,18 +17,15 @@ def convert_csv_to_df(csv_path):
     df["seed"] = [seed] * df.shape[0]
     return df
 
+
 def main(csv_paths):
     all_frames = []
     for i in csv_paths:
         all_frames.append(convert_csv_to_df(i))
     df = pd.concat(all_frames, ignore_index=True)
-    seaborn.lineplot(
-        data=df,
-        x="idx",
-        y="rewards/step",
-        hue="method",
-    )
+    seaborn.lineplot(data=df, x="idx", y="rewards/step", hue="method")
     plt.show()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
