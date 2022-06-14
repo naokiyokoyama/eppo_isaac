@@ -7,6 +7,7 @@ import os.path as osp
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn
+import tqdm
 
 
 def convert_csv_to_df(csv_path):
@@ -20,10 +21,13 @@ def convert_csv_to_df(csv_path):
 
 def main(csv_paths):
     all_frames = []
-    for i in csv_paths:
+    for i in tqdm.tqdm(csv_paths):
         all_frames.append(convert_csv_to_df(i))
     df = pd.concat(all_frames, ignore_index=True)
+    print("Generating plot...")
     seaborn.lineplot(data=df, x="idx", y="rewards/step", hue="method")
+    ax = plt.gca()
+    ax.set_ylim([4000, None])
     plt.show()
 
 
