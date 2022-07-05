@@ -1,0 +1,67 @@
+RUNNER:
+  name: "PPOTrainer"
+ENVS_NAME: ""
+NUM_ENVIRONMENTS: -1
+NUM_UPDATES: 500
+SEED: 1
+CUDA: True
+USE_TORCHSCRIPT: True
+INIT_LAYERS: ["zero_all_bias"]
+TENSORBOARD_DIR: "tb"
+ERASE_EXISTING_TB: True
+OBS_PREPROCESSOR: "isaac_get_obs"
+ACTOR_CRITIC:
+  name: "ActorCritic"
+  net:
+    name: "MLPBase"
+    hidden_sizes: [256, 128, 64]
+    activation: "elu"
+  critic:
+    # The output shape of the critic will be determined by the learning algorithm used. Typically, will be 1.
+    name: "MLPCritic"
+    hidden_sizes: []
+    is_head: True
+    activation: "elu"
+  q_critic:
+    name: "MLPCritic"
+    hidden_sizes: [128, 64]
+    activation: "elu"
+  action_distribution:
+    name: "GaussianActDist"
+    min_sigma: 1.0e-6
+    max_sigma: 1.0
+    sigma_as_params: True
+    clip_sigma: False
+RL:
+  scheduler:
+    name: AdaptiveScheduler
+    kl_threshold: 0.008
+    min_lr: 1.0e-6
+    max_lr: 1.0e-2
+  PPO:
+    clip_param: 0.2
+    ppo_epoch: 4
+    num_mini_batch: 2
+    value_loss_coef: 2.0
+    entropy_coef: 0.000
+    truncate_grads: False
+    # The actor_lr will be used for the critic if it is just a head
+    actor_lr: 3.0e-4
+    critic_lr: 3.0e-3
+    q_critic_lr: 3.0e-3  # not used for vanilla PPO, but is used for RPG, ERPG, and EPPO
+    eps: 1.0e-8
+    max_grad_norm: 1.0
+    use_linear_clip_decay: False
+    use_clipped_value_loss: False
+    use_normalized_advantage: True
+    q_coeff: 1.0
+    q_terms: -1.0
+
+  num_steps: 16  # rollout length
+  use_gae: True
+  gamma: 0.99
+  tau: 0.95
+  value_bootstrap: True
+  use_linear_lr_decay: False
+  reward_window_size: 50
+  reward_scale: 0.01
