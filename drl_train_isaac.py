@@ -36,6 +36,7 @@ def main():
     cfg.seed = drl_config.SEED  # sync seed with drl's cfg
 
     print(OmegaConf.to_yaml(cfg))
+    print(drl_config)
     env = isaacgym_task_map[cfg.task_name](
         cfg=OmegaConf.to_object(cfg.task),
         sim_device="cuda:0",
