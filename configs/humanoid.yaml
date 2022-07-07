@@ -24,7 +24,7 @@ ACTOR_CRITIC:
     activation: "elu"
   q_critic:
     name: "MLPCritic"
-    hidden_sizes: [128, 64]
+    hidden_sizes: [200, 100]
     activation: "elu"
   action_distribution:
     name: "GaussianActDist"
@@ -58,6 +58,7 @@ RL:
     use_normalized_advantage: True
     q_coeff: 1.0
     q_terms: -1.0
+  term_by_term_returns: True
 
   num_steps: 32  # rollout length
   use_gae: True
