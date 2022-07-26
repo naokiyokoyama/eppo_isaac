@@ -5,6 +5,7 @@ import argparse
 import os.path as osp
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn
 import tqdm
@@ -27,7 +28,10 @@ def main(csv_paths):
     print("Generating plot...")
     seaborn.lineplot(data=df, x="idx", y="rewards/step", hue="method")
     ax = plt.gca()
-    ax.set_ylim([4000, None])
+    ax.set_ylim([0, None])
+    start, end = ax.get_ylim()
+    ax.yaxis.set_ticks(np.arange(start, end, 500))
+    plt.grid()
     plt.show()
 
 
