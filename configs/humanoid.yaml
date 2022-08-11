@@ -16,24 +16,32 @@ ACTOR_CRITIC:
     name: "MLPBase"
     hidden_sizes: [400, 200, 100]
     activation: "elu"
-  critic:
-    # The output shape of the critic will be determined by the learning algorithm used. Typically, will be 1.
-    name: "MLPCritic"
-    hidden_sizes: []
-    is_head: True
-    activation: "elu"
-  q_critic:
-    name: "MLPCritic"
-    hidden_sizes: [200, 100]
-    activation: "elu"
   action_distribution:
     name: "GaussianActDist"
     min_sigma: 1.0e-6
     max_sigma: 1.0
     sigma_as_params: True
     clip_sigma: False
+  critic:
+    # The output shape of the critic will be determined by the learning algorithm used. Typically, will be 1.
+    name: "MLPCritic"
+    hidden_sizes: []
+    is_head: True
+    activation: "elu"
+    normalize_value: True
+  head:
+    name: "None"
+    hidden_sizes: []
+    is_head: True
+    activation: "elu"
+    normalize_value: True
+  q_critic:
+    name: "MLPCriticAdvTerms"
+    hidden_sizes: [128, 64]
+    is_head: False
+    activation: "elu"
+    normalize_value: False
   normalize_obs: True
-  normalize_value: True
 RL:
   scheduler:
     name: AdaptiveScheduler
@@ -42,7 +50,8 @@ RL:
     max_lr: 1.0e-2
   PPO:
     clip_param: 0.2
-    ppo_epoch: 5
+    policy_epoch: 5
+    critic_epoch: 12
     num_mini_batch: 4
     value_loss_coef: 4.0
     entropy_coef: 0.000
@@ -58,6 +67,7 @@ RL:
     use_normalized_advantage: True
     q_coeff: 1.0
     q_terms: -1.0
+    aux_coeff: 1.0
   term_by_term_returns: True
 
   num_steps: 32  # rollout length
